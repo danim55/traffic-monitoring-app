@@ -1,0 +1,5 @@
+- name: Approve Pull Request
+  env:
+    GH_TOKEN: ${{ secrets.APPROVER_TOKEN }}
+  run: |
+    gh pr review ${{ github.event.issue.number }} --approve -R ${{ github.repository }}
