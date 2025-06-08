@@ -1,35 +1,34 @@
-name: Auto-Approve on “APPROVED” Comment
+name: Auto Approve PR
 
 on:
-  # Fires for any PR event against your default branch, even for feature-branch PRs
-  pull_request_target:
-    types: [opened, reopened, synchronize]
-
-  # Fires when someone leaves a comment (outside of a “Review”) on an issue/PR
   issue_comment:
     types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request Number'
+        required: true
+        type: string
 
 permissions:
-  pull-requests: write  # allow createReview
+  pull-requests: write
   contents: read
 
 jobs:
   auto-approve:
-    # single-line conditional is required
-    if: ${{ (github.event_name == 'pull_request_target' && contains(github.event.pull_request.title, 'APPROVED')) || (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'APPROVED')) }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'APPROVED') }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Auto-approve PR
-        uses: actions/github-script@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const pr = github.context.payload.pull_request || 
-                       { number: github.context.payload.issue.number };
-            await github.rest.pulls.createReview({
-              owner: context.repo.owner,
-              repo:  context.repo.repo,
-              pull_number: pr.number,
-              event: 'APPROVE',
-            });
+          token: ${{ secrets.APPROVER_TOKEN }}
+
+      - name: Approve Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.APPROVER_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number || inputs.pr_number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr review $PR_NUMBER --approve --repo $REPO
