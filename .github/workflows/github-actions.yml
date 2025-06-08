@@ -1,4 +1,4 @@
-name: Auto Approve Pull Request
+name: Auto Approve PR
 
 on:
   issue_comment:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'Pull Request Number (for manual trigger)'
+        description: 'Pull Request Number'
         required: true
         type: string
 
@@ -16,17 +16,12 @@ permissions:
 
 jobs:
   auto-approve:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, 'APPROVED')) }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, 'APPROVED') }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gh
-
       - name: Checkout repository
-        uses: action/checkout@v4
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.APPROVER_TOKEN }}
 
@@ -36,7 +31,4 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number || inputs.pr_number }}
           REPO: ${{ github.repository }}
         run: |
-          echo "Approving PR #${PR_NUMBER}" in ${REPO}
-          gh auth setup-git
           gh pr review $PR_NUMBER --approve --repo $REPO
-            
