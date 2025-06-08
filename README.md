@@ -10,6 +10,7 @@ An application to monitor and control network traffic flows through a control pa
 - Index flow data in OpenSearch.  
 - Visualize traffic metrics in OpenSearch Dashboards.  
 - Automatically generate and apply blocking rules for malicious IP addresses.  
+- Generate and apply blocking rules for malicious IP addresses from control panel.  
 - Additional functionality to be added as development continues.
 
 ---
