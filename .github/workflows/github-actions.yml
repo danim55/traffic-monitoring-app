@@ -1,18 +1,42 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+name: Auto Approve Pull Request
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request Number (for manual trigger)'
+        required: true
+        type: string
+
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
-  Explore-GitHub-Actions:
+  auto-approve:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, '-APPROVED-')) }}
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+      - name: Install GitHub CLI
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          sudo apt-get update
+          sudo apt-get install -y gh
+
+      - name: Checkout repository
+        uses: action/checkout@v4
+        with:
+          token: ${{ secrets.APPROVER_TOKEN }}
+
+      - name: Approve Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.APPROVER_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number || inputs.pr_number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Approving PR #${PR_NUMBER}" in ${REPO}
+          gh auth setup-git
+          gh pr review $PR_NUMBER --approve --repo $REPO
+            
