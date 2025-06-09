@@ -9,7 +9,7 @@ jobs:
 
     - name: Check out repository code
       uses: actions/checkout@v4
-    - run: echho ""THe ${{ github.repository }} repository has been cloned to the runner
+    - run: echho "THe ${{ github.repository }} repository has been cloned to the runner"
 
     - name: List files of repository
       run: |
