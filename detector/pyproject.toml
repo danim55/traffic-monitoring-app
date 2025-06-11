@@ -1,0 +1,22 @@
+[project]
+name = "detector"
+version = "0.0.1"
+description = "Network detector"
+authors = ["Daniel Merino Cano <dmerinocano@gmail.com>"]
+readme = "README.md"
+requires-python = ">=3.9"
+
+[project.dependencies]
+# add runtime deps here, e.g.
+# watchdog = "^2.1"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0", 
+  "flake8>=4.0", 
+  "mypy>=1.0"
+]
+
+[build-system]
+requires = ["poetry-core>=1.2.0"]
+build-backend = "poetry.core.masonry.api"
