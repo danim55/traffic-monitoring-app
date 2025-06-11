@@ -18,3 +18,8 @@ __pycache__/
 
 # Local History for Visual Studio Code
 .history/
+
+
+# As reccommended here https://stackoverflow.com/questions/61037557/should-i-commit-lock-file-changes-separately-what-should-i-write-for-the-commi
+# We do not commit the lock file of poetry
+poetry.lock
