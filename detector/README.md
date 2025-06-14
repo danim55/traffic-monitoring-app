@@ -8,7 +8,7 @@ This module is part of a larger system and is intended to operate as a long-runn
 
 ---
 
-## 📁 Directory Overview
+## Directory Overview
 
 ```
 
@@ -37,6 +37,7 @@ detector/
 
 ```bash
 cd detector
+poetry shell
 poetry install
 ````
 
@@ -54,7 +55,7 @@ poetry run pytest
 
 ---
 
-## 🐳 Docker
+## Docker
 
 The included `Dockerfile` builds a minimal production-ready container image using Poetry for dependency management.
 
@@ -80,7 +81,7 @@ inside the container.
 
 ---
 
-## 🔐 Corporate Environment Configuration
+## Corporate Environment Configuration
 
 If working in a corporate network (e.g., behind an Artifactory proxy):
 
@@ -94,12 +95,9 @@ Make sure any internal certificates or proxy configurations are correctly mirror
 
 ---
 
-## 🧩 Integration Notes
+## Integration Notes
 
 * This module is expected to be orchestrated within a broader application stack.
 * Future deployment will include container orchestration via Kubernetes and Helm.
 * Gradle and GitHub Actions will be used to coordinate multi-component builds and CI/CD.
 
----
-
-```
