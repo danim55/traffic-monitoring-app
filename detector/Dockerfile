@@ -1,22 +1,11 @@
 FROM python:3.12-slim
 
-# -----------------COMPANY CONFIGURATION--------------
-
-# # Ensure OS CA certs are installed
-# RUN apt-get update && \
-#     apt-get install --no-install-recommends -y ca-certificates && \
-#     rm -rf /var/lib/apt/lists/*
-
-# # Use the OS truststore for Python HTTPS
-# ENV REQUESTS_CA_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
-# # Tell pip to use the same bundle
-# ENV PIP_CERT="/etc/ssl/certs/ca-certificates.crt"
-
-# # Configure pip to use corporate Artifactory proxy and trust host
-# RUN pip config set global.index-url https://repo.aes.alcatel.fr:8443/artifactory/api/pypi/python-pypipythonorg-remote/simple && \
-#     pip config set global.trusted-host repo.aes.alcatel.fr
-
-# -----------------END OF COMPANY CONFIGURATION---------
+# Company configuration if needed
+ARG ENVIRONMENT
+ENV ENVIRONMENT=${ENVIRONMENT}
+COPY resources/company-configuration.sh /usr/local/bin/company-configuration.sh
+RUN chmod +x /usr/local/bin/company-configuration.sh
+RUN /usr/local/bin/company-configuration.sh
 
 # Install Poetry (pinned version)
 RUN pip install poetry==1.4.2

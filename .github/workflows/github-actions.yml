@@ -43,5 +43,5 @@ jobs:
       - name: Build and Push Docker image
         run: |
           cd detector
-          docker build -t ghcr.io/danim55/traffic-monitoring/detector:0.0.1 .
+          docker build --build-arg ENVIRONMENT=PROD -t ghcr.io/danim55/traffic-monitoring/detector:0.0.1 .
           docker push ghcr.io/danim55/traffic-monitoring/detector:0.0.1
