@@ -19,8 +19,8 @@ name: Build and Publish to GHCR
 
 on:
   push:
-    branches:
-      - main  # Only trigger on merge into main
+    # branches:
+    #   - main  # Only trigger on merge into main
 
 jobs:
   build-and-publish:
