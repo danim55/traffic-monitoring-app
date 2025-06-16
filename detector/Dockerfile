@@ -29,7 +29,7 @@ COPY detector ./detector
 RUN touch README.md
 
 # Install only production dependencies
-RUN poetry install --no-dev --no-interaction --no-ansi
+RUN poetry install --without dev
 
 # Default command
 ENTRYPOINT ["poetry", "run", "python", "-m", "detector.main"]
