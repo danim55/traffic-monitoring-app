@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: python-detector
   labels:
-    app: traffic-detector
+    app: traffic-monitoring
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: traffic-detector
+      app: traffic-monitoring
   template:
     metadata:
       labels:
-        app: traffic-detector
+        app: traffic-monitoring
     spec:
       containers:
         - name: main
