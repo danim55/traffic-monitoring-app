@@ -1,0 +1,11 @@
+apiVersion: v2
+name: traffic-monitoring
+description: "Traffic monitoring"
+type: application
+version: "0.0.1"
+appVersion: "1.0.0"
+kubeVersion: ^1.28
+# dependencies:
+#   - name: 
+#     repository: 
+#     version: 
