@@ -2,8 +2,8 @@ name: Run detector tests
 
 on:
   push:
-    paths:
-      - 'detector/**'
+    # paths:
+    #   - 'detector/**'
 
 jobs:
   test:
