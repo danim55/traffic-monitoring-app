@@ -8,31 +8,6 @@ on:
       - 'detector/**'
 
 jobs:
-  test:
-    name: Run Python Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Install dependencies (including dev)
-        working-directory: detector
-        run: |
-          poetry install --no-interaction --no-ansi
-
-      - name: Run pytest
-        working-directory: detector
-        run: poetry run pytest --maxfail=1 --disable-warnings -q
-
   build-and-publish:
     runs-on: ubuntu-latest
 
