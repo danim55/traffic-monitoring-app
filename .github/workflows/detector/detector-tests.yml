@@ -1,4 +1,4 @@
-name: Build and Publish to detector GHCR
+name: Run detector tests
 
 on:
   push:

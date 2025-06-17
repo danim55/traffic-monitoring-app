@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Only trigger on merge into main
     paths:
-      - 'detector/**'
+      - 'detector/**' # Only if some changes were made under detector folder
 
 jobs:
   build-and-publish:
