@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-detector
+  labels:
+    app: traffic-detector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traffic-detector
+  template:
+    metadata:
+      labels:
+        app: traffic-detector
+    spec:
+      containers:
+        - name: main
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
