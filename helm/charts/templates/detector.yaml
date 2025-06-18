@@ -18,3 +18,5 @@ spec:
         - name: main
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+      imagePullSecrets:
+        - name: secret-registry-credentials
