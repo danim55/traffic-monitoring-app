@@ -2,8 +2,10 @@ name: Build and Publish to detector GHCR
 
 on:
   push:
-    # branches:
-    #   - main  # Only trigger on merge into main
+    branches:
+      - main  # Only trigger on merge into main
+    paths:
+      - 'detector/**' # Only if some changes were made under detector folder
 
 jobs:
   build-and-publish:

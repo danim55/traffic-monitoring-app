@@ -1,0 +1,13 @@
+# Default values for detector.
+
+replicaCount: 1
+
+# Pod-level settings
+env: []         # e.g. [{ name: ENVIRONMENT, value: "DEV" }]
+resources: {}   # e.g. { limits: { cpu: "100m", memory: "128Mi" } }
+
+# Optional: expose ports if your app listens (e.g., metrics)
+service:
+  enabled: false
+  type: ClusterIP
+  port: 80

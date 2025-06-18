@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-detector
+  labels:
+    app: traffic-monitoring
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: traffic-monitoring
+  template:
+    metadata:
+      labels:
+        app: traffic-monitoring
+    spec:
+      containers:
+        - name: main
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+      imagePullSecrets:
+        - name: secret-registry-credentials
