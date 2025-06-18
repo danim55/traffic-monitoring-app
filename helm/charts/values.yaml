@@ -2,14 +2,6 @@
 
 replicaCount: 1
 
-# image:
-#   repository: ghcr.io/danim55/traffic-monitoring/detector
-#   tag: "0.0.1"
-#   pullPolicy: IfNotPresent
-#   pullSecret:
-#     username: {{ $registryUsername | quote }}
-#     password: {{ $registryPassword | quote }}
-
 # Pod-level settings
 env: []         # e.g. [{ name: ENVIRONMENT, value: "DEV" }]
 resources: {}   # e.g. { limits: { cpu: "100m", memory: "128Mi" } }
