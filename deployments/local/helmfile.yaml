@@ -44,8 +44,8 @@ releases:
 
   - name: "opensearch"
     namespace: {{ $opensearchNamespace }}
-    chart: opensearch
+    chart: opensearch/opensearch
 
   - name: "opensearch-dashboards"
     namespace: {{ $opensearchNamespace }}
-    chart: opensearch-dashboards
+    chart: opensearch/opensearch-dashboards
