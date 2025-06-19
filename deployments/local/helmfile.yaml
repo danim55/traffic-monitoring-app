@@ -9,6 +9,11 @@
 {{ $registryUsername := requiredEnv "REGISTRY_USER" }}
 {{ $registryPassword := requiredEnv "REGISTRY_PASSWORD" }}
 
+repositories:
+
+  - name: opensearch
+    url: https://opensearch-project.github.io/helm-charts/
+
 helmDefaults:
   wait: false
   waitForJobs: false
@@ -45,6 +50,14 @@ releases:
   - name: "opensearch"
     namespace: {{ $opensearchNamespace }}
     chart: opensearch/opensearch
+    version: v3.0.0
+    values:
+      - replicas: 1
+        extraEnvs:
+          - name: discovery.type
+            value: "single-node"
+          - name: DISABLE_SECURITY_PLUGIN
+            value: "true"
 
   - name: "opensearch-dashboards"
     namespace: {{ $opensearchNamespace }}
