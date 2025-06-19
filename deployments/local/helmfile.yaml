@@ -52,7 +52,8 @@ releases:
     chart: opensearch/opensearch
     version: v3.0.0
     values:
-      - replicas: 1
+      - singleNode: true
+        replicas: 1
         extraEnvs:
           - name: discovery.type
             value: "single-node"
@@ -62,3 +63,7 @@ releases:
   - name: "opensearch-dashboards"
     namespace: {{ $opensearchNamespace }}
     chart: opensearch/opensearch-dashboards
+    values:
+      - extraEnvs:
+          - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
+            value: "true"
