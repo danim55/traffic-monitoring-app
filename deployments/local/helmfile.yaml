@@ -3,7 +3,6 @@
 
 # OpenSearch
 {{ $opensearchNamespace := "opensearch" }}
-{{ $opensearchDashboardsNamespace := "opensearch-dashboards" }}
 
 # Registry credentials
 {{ $registry := requiredEnv "REGISTRY" }}
@@ -15,6 +14,11 @@ helmDefaults:
   waitForJobs: false
 
 releases:
+
+  ##############################################################################
+  # Traffic Monitoring app
+  ##############################################################################
+
 
   - name: "traffic-monitoring"
     namespace: {{ $trafficMonitoringNamespace | quote }}
@@ -32,3 +36,16 @@ releases:
             password: {{ $registryPassword | quote }}
         debug: false
         localDeployment: true # Inhibits CPU & memory requests & limits
+
+
+  ##############################################################################
+  # OpenSearch
+  ##############################################################################
+
+  - name: "opensearch"
+    namespace: {{ $opensearchNamespace }}
+    chart: opensearch
+
+  - name: "opensearch-dashboards"
+    namespace: {{ $opensearchNamespace }}
+    chart: opensearch-dashboards
