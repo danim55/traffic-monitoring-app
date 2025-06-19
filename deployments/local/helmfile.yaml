@@ -3,18 +3,27 @@
 
 # OpenSearch
 {{ $opensearchNamespace := "opensearch" }}
-{{ $opensearchDashboardsNamespace := "opensearch-dashboards" }}
 
 # Registry credentials
 {{ $registry := requiredEnv "REGISTRY" }}
 {{ $registryUsername := requiredEnv "REGISTRY_USER" }}
 {{ $registryPassword := requiredEnv "REGISTRY_PASSWORD" }}
 
+repositories:
+
+  - name: opensearch
+    url: https://opensearch-project.github.io/helm-charts/
+
 helmDefaults:
   wait: false
   waitForJobs: false
 
 releases:
+
+  ##############################################################################
+  # Traffic Monitoring app
+  ##############################################################################
+
 
   - name: "traffic-monitoring"
     namespace: {{ $trafficMonitoringNamespace | quote }}
@@ -32,3 +41,29 @@ releases:
             password: {{ $registryPassword | quote }}
         debug: false
         localDeployment: true # Inhibits CPU & memory requests & limits
+
+
+  ##############################################################################
+  # OpenSearch
+  ##############################################################################
+
+  - name: "opensearch"
+    namespace: {{ $opensearchNamespace }}
+    chart: opensearch/opensearch
+    version: v3.0.0
+    values:
+      - singleNode: true
+        replicas: 1
+        extraEnvs:
+          - name: discovery.type
+            value: "single-node"
+          - name: DISABLE_SECURITY_PLUGIN
+            value: "true"
+
+  - name: "opensearch-dashboards"
+    namespace: {{ $opensearchNamespace }}
+    chart: opensearch/opensearch-dashboards
+    values:
+      - extraEnvs:
+          - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
+            value: "true"
