@@ -60,7 +60,7 @@ The `Dockerfile` produces a minimal, production‑ready image:
 ### Build
 
 ```bash
-docker build -t state-init:latest .
+docker build --build-arg ENVIRONMENT=DEV -t ghcr.io/danim55/traffic-monitoring/state-init:0.0.1 .
 ```
 
 ### Run
@@ -83,10 +83,10 @@ python -m state_init.main
 
 ## Corporate Proxy Configuration
 
-If you’re behind a corporate Artifactory or custom PyPI proxy, the Docker image is preconfigured to:
+If you're behind a corporate Artifactory or custom PyPI proxy, the Docker image is preconfigured to:
 
 * Use your internal index URL
-* Trust your organization’s CA certificates via `REQUESTS_CA_BUNDLE` and `PIP_CERT`
+* Trust your organization's CA certificates via `REQUESTS_CA_BUNDLE` and `PIP_CERT`
 
 Ensure any internal certs or proxy settings are mounted or baked into the image as needed.
 
