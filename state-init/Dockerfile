@@ -21,4 +21,4 @@ RUN touch README.md
 RUN poetry install --without dev
 
 # Default command
-ENTRYPOINT ["poetry", "run", "python", "-m", "state-init.main"]
+ENTRYPOINT ["poetry", "run", "python", "-m", "state_init.main"]
