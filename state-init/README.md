@@ -8,8 +8,8 @@ This directory contains the backend component responsible for initializing and s
 
 ```
 
-detector/             # Rename to state‑init (or your service name)
-├── state\_init/       # Python package
+state-init/           # Root folder
+├── state_init/       # Python package
 │   └── main.py       # Entry point: connects to OpenSearch and applies indices/mappings
 ├── tests/            # pytest unit tests
 ├── pyproject.toml    # Poetry project configuration
