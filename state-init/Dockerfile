@@ -14,7 +14,7 @@ WORKDIR /app
 
 # Copy Poetry config & project metadata
 COPY pyproject.toml poetry.lock ./
-COPY state-init ./state-init
+COPY state_init ./state_init
 RUN touch README.md
 
 # Install only production dependencies
