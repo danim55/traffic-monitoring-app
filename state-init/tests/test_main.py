@@ -1,4 +1,4 @@
-from detector.main import main
+from state_init.main import main
 
 
 def test_main_output(capsys):

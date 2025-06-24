@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "state-init"
+name = "state_init"
 version = "0.0.1"
 description = "State Init to configure and populate Opensearch & Opensearch Dashboards"
 authors = ["Daniel Merino Cano <dmerinocano@gmail.com>"]

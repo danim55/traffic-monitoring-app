@@ -32,7 +32,7 @@ detector/             # Rename to state‑init (or your service name)
 ### Setup
 
 ```bash
-cd detector            # or your renamed directory
+cd state-init            # or your renamed directory
 poetry install
 poetry shell
 ````
@@ -91,9 +91,3 @@ If you’re behind a corporate Artifactory or custom PyPI proxy, the Docker imag
 Ensure any internal certs or proxy settings are mounted or baked into the image as needed.
 
 ---
-
-## Integration & Deployment
-
-* This service will be deployed alongside other components (e.g., your detector and dashboards) in Kubernetes via Helm.
-* Helm charts and Helmfile overrides will manage configuration per environment.
-* CI/CD pipelines (GitHub Actions, Gradle, or similar) will handle builds, tests, and automated deployments.
