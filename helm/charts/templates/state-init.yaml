@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: state-init
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 120
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: main
+          image: 
+          imagePullPolicy: {{ .Values.stateInit.imagePullPolicy }}
+          env:
+          - name: STATEINIT_OPENSEARCH_DASHBOARDS_HOST
+            value: {{ .Values.opensearchDashboards.host | quote }}
+          - name: STATEINIT_OPENSEARCH_DASHBOARDS_PORT
+            value: {{ .Values.opensearchDashboards.port | quote }}
+          - name: STATEINIT_OPENSEARCH_DASHBOARDS_RESOURCES_PATH
+            value: {{ .Values.opensearchDashboards.resourcesPath | quote }}
+          - name: STATEINIT_OPENSEARCH_HOST
+            value: {{ .Values.opensearch.host | quote }}
+          - name: STATEINIT_OPENSEARCH_PORT
+            value: {{ .Values.opensearch.port | quote }}
+        imagePullSecrets:
+        - name: secret-registry-credentials
+      # initContainers:
+      #   - name: wait-for-opensearch
+      #     image: curlimages/curl:8.4.0
+      #     command: [ "sh", "-c" ]
+      #     args:
+      #       - |
+      #         echo "Waiting for OpenSearch at {{ .Values.opensearch.host }}:{{ .Values.opensearch.port }}..."
+      #         until curl -sSf http://{{ .Values.opensearch.host }}:{{ .Values.opensearch.port }} >/dev/null; do
+      #           echo "OpenSearch not available, retrying..."
+      #           sleep 5
+      #         done
+      #         echo "OpenSearch is available"
+
+      #   - name: wait-for-dashboards
+      #     image: curlimages/curl:8.4.0
+      #     command: [ "sh", "-c" ]
+      #     args:
+      #       - |
+      #         echo "Waiting for OpenSearch Dashboards at {{ .Values.opensearchDashboards.host }}:{{ .Values.opensearchDashboards.port }}..."
+      #         until curl -sSf http://{{ .Values.opensearchDashboards.host }}:{{ .Values.opensearchDashboards.port }}/opensearch/api/status >/dev/null; do
+      #           echo "OpenSearch Dashboards not available, retrying..."
+      #           sleep 5
+      #         done
+      #         echo "OpenSearch Dashboards is available"

@@ -40,6 +40,16 @@ releases:
             pullSecret:
               username: {{ $registryUsername | quote }}
               password: {{ $registryPassword | quote }}
+        stateInit:
+          image:
+            pullPolicy: IfNotPresent
+        opensearchDashboards:
+          host: {{ print "opensearch-dashboards." $opensearchNamespace ".svc.cluster.local" | quote }}
+          port: 5601
+          resourcesPath: "/opt/resources/"
+        opensearch:
+          host: {{ print "opensearch." $opensearchNamespace ".svc.cluster.local" | quote }}
+          port: 9200
         debug: false
         localDeployment: true # Inhibits CPU & memory requests & limits
 
