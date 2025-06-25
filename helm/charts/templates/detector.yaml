@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.detector.image.repository }}:{{ .Values.detector.image.tag }}"
+          imagePullPolicy: {{ .Values.detector.image.pullPolicy }}
       imagePullSecrets:
         - name: secret-registry-credentials

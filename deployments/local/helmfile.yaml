@@ -31,14 +31,15 @@ releases:
     # TODO: Fetch chart from the artifact registry. We'll be able to do that when we can tag chart OCI images with pipeline IDs. See https://jira.aes.alcatel.fr:8443/browse/DEVOPSSP-499
     chart: ../../helm/charts
     values:
-      - image:
-          repository: ghcr.io/danim55/traffic-monitoring/detector
-          tag: "0.0.1"
-          pullPolicy: IfNotPresent
-          registry: {{ $registry | quote }}
-          pullSecret:
-            username: {{ $registryUsername | quote }}
-            password: {{ $registryPassword | quote }}
+      - detector:
+          image:
+            repository: ghcr.io/danim55/traffic-monitoring/detector
+            tag: "0.0.1"
+            pullPolicy: IfNotPresent
+            registry: {{ $registry | quote }}
+            pullSecret:
+              username: {{ $registryUsername | quote }}
+              password: {{ $registryPassword | quote }}
         debug: false
         localDeployment: true # Inhibits CPU & memory requests & limits
 
