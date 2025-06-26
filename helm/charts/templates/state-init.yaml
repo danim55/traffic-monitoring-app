@@ -10,7 +10,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: main
-          image: {{ .Values.image.registry }} "state-init:" {{ .Values.stateInit.tag }}
+          image: {{ printf "%s/%s:%s" (required "Registry is required" .Values.image.registry) (.Chart.Name) (.Values.stateInit.imageTag ) | quote }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           env:
           - name: STATEINIT_OPENSEARCH_DASHBOARDS_HOST
@@ -23,8 +23,8 @@ spec:
             value: {{ .Values.opensearch.host | quote }}
           - name: STATEINIT_OPENSEARCH_PORT
             value: {{ .Values.opensearch.port | quote }}
-        imagePullSecrets:
-        - name: secret-registry-credentials
+      imagePullSecrets:
+      - name: secret-registry-credentials
       # initContainers:
       #   - name: wait-for-opensearch
       #     image: curlimages/curl:8.4.0

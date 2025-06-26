@@ -38,9 +38,9 @@ releases:
             username: {{ $registryUsername | quote }}
             password: {{ $registryPassword | quote }}
         detector:
-          tag: "0.0.1"
+          imageTag: "0.0.1"
         stateInit:
-          tag: "0.0.1"
+          imageTag: "0.0.1"
         opensearchDashboards:
           host: {{ print "opensearch-dashboards." $opensearchNamespace ".svc.cluster.local" | quote }}
           port: 5601
