@@ -1,9 +1,6 @@
 import os
 import sys
 
-from opensearchpy import OpenSearch
-from opensearch_dsl import Search
-
 
 def _get_required_env_var(var_name: str) -> str:
     value = os.getenv(var_name)
