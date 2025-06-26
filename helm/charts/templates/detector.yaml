@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: {{ .Values.image.registry }} "detector:" {{ .Values.detector.tag }}
+          image: {{ printf "%s/%s:%s" (required "Registry is required" .Values.image.registry) "detector" (.Values.detector.imageTag ) | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
       imagePullSecrets:
         - name: secret-registry-credentials
