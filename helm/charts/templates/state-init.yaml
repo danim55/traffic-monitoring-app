@@ -10,8 +10,8 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: main
-          image: 
-          imagePullPolicy: {{ .Values.stateInit.imagePullPolicy }}
+          image: {{ .Values.image.registry }} "state-init:" {{ .Values.stateInit.tag }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           env:
           - name: STATEINIT_OPENSEARCH_DASHBOARDS_HOST
             value: {{ .Values.opensearchDashboards.host | quote }}
