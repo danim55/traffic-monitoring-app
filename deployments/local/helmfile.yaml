@@ -32,13 +32,22 @@ releases:
     chart: ../../helm/charts
     values:
       - image:
-          repository: ghcr.io/danim55/traffic-monitoring/detector
-          tag: "0.0.1"
           pullPolicy: IfNotPresent
           registry: {{ $registry | quote }}
           pullSecret:
             username: {{ $registryUsername | quote }}
             password: {{ $registryPassword | quote }}
+        detector:
+          imageTag: "0.0.1"
+        stateInit:
+          imageTag: "0.0.1"
+        opensearchDashboards:
+          host: {{ print "opensearch-dashboards." $opensearchNamespace ".svc.cluster.local" | quote }}
+          port: 5601
+          resourcesPath: "/opt/resources/"
+        opensearch:
+          host: {{ print "opensearch." $opensearchNamespace ".svc.cluster.local" | quote }}
+          port: 9200
         debug: false
         localDeployment: true # Inhibits CPU & memory requests & limits
 
