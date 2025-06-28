@@ -37,5 +37,6 @@ def load_opensearch_idices(dashboards_conf_file: str) -> None:
     for index_name, mappings in index_mappings.items():
         create_index(index_name, mappings)
 
+
 if __name__ == "__main__":
     entry_point()
