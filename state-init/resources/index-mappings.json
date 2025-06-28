@@ -1,0 +1,21 @@
+{
+    "example-index": {
+        "mappings": {
+            "properties": {
+                "exampleFloat": {
+                    "type": "float"
+                },
+                "exampleInger": {
+                    "type": "integer"
+                },
+                "exampleKeyword": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "date",
+                    "format": "strict_date_optional_time||epoch_millis"
+                }
+            }
+        }
+    }
+}

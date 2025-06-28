@@ -10,9 +10,7 @@ def _get_required_env_var(var_name: str) -> str:
 
 
 def entry_point() -> None:
-    # Opensearch variable envs
-    opensearch_host = _get_required_env_var("STATEINIT_OPENSEARCH_HOST")
-    opensearch_port = _get_required_env_var("STATEINIT_OPENSEARCH_PORT")
+    # Opensearch dashboards variable envs
     opensearch_dashboard_host = _get_required_env_var(
         "STATEINIT_OPENSEARCH_DASHBOARDS_HOST"
     )
