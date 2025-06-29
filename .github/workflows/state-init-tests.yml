@@ -2,8 +2,8 @@ name: Run state-init tests
 
 on:
   push:
-    # paths:
-    #   - 'state-init/**'
+    paths:
+      - 'state-init/**'
 
 jobs:
   test:
