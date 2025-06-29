@@ -1,11 +1,11 @@
-name: Build and Publish to detector GHCR
+name: Build and Publish to state-init GHCR
 
 on:
   push:
     branches:
       - main  # Only trigger on merge into main
     paths:
-      - 'state-init/**' # Only if some changes were made under detector folder
+      - 'state-init/**' # Only if some changes were made under state-init folder
 
 jobs:
   build-and-publish:
@@ -25,7 +25,7 @@ jobs:
           username: danim55
           password: ${{ secrets.ARTIFACTORY_TOKEN }}
 
-      - name: Build and Push Docker image
+      - name: Build and Push state-init Docker image
         run: |
           cd state-init
           docker build --build-arg ENVIRONMENT=PROD -t ghcr.io/danim55/traffic-monitoring/state-init:0.0.1 .

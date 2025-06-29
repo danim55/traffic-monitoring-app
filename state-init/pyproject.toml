@@ -6,7 +6,8 @@ authors = ["Daniel Merino Cano <dmerinocano@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9"
+python = ">=3.9,<4"
+opensearch-py = "3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"

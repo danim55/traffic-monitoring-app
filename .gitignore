@@ -21,3 +21,6 @@ __pycache__/
 
 # Secrets to local development
 secrets.envrc
+
+# JetBrains' Ides
+.idea
