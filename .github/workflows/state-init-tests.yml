@@ -1,0 +1,32 @@
+name: Run state-init tests
+
+on:
+  push:
+    paths:
+      - 'state-init/**'
+
+jobs:
+  test:
+    name: Run state-init Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install dependencies (including dev)
+        working-directory: state-init
+        run: |
+          poetry install --no-interaction --no-ansi
+
+      - name: Run pytest
+        working-directory: state-init
+        run: poetry run pytest --maxfail=1 --disable-warnings -q
