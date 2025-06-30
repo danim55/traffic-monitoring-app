@@ -73,6 +73,11 @@ releases:
     values:
       - opensearchHosts:
         - "http://opensearch-cluster-master:9200"
+      - server.host: "0.0.0.0"
       - extraEnvs:
           - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
             value: "true"
+      - startupProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        failureThreshold: 12
