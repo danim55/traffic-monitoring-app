@@ -28,7 +28,7 @@ def entry_point() -> None:
         "STATEINIT_OPENSEARCH_DASHBOARDS_RESOURCES_PATH"
     )
 
-    load_opensearch_indices(opensearch_dashboard_conf_path)
+    load_opensearch_indices(dashboards_conf_file=opensearch_dashboard_conf_path)
 
     load_opensearch_dashboard_configuration(opensearch_dashboard_conf_path=opensearch_dashboard_conf_path,
                                             opensearch_dashboard_host=opensearch_dashboard_host,
@@ -48,7 +48,7 @@ def load_opensearch_dashboard_configuration(opensearch_dashboard_conf_path: str,
                                             opensearch_dashboard_host: str,
                                             opensearch_dashboard_port: str) -> None:
     # OpenSearch Dashboards URL
-    opensearch_dashboard_url = f'http://{opensearch_dashboard_host}:{opensearch_dashboard_port}/opensearch'
+    opensearch_dashboard_url = f'http://{opensearch_dashboard_host}:{opensearch_dashboard_port}'
 
     # API endpoint for importing saved objects
     import_endpoint = f'{opensearch_dashboard_url}/api/saved_objects/_import?overwrite=true'
@@ -62,7 +62,7 @@ def load_opensearch_dashboard_configuration(opensearch_dashboard_conf_path: str,
 
         # Set the headers for the request
         headers = {
-            'osd-version': '2.18.0',
+            'osd-version': '3.0.0',
         }
 
         # Send the POST request to import the dashboard
