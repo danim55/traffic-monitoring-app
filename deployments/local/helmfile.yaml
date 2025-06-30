@@ -64,8 +64,6 @@ releases:
       - singleNode: true
         replicas: 1
         extraEnvs:
-          - name: discovery.type
-            value: "single-node"
           - name: DISABLE_SECURITY_PLUGIN
             value: "true"
 
@@ -73,6 +71,7 @@ releases:
     namespace: {{ $opensearchNamespace }}
     chart: opensearch/opensearch-dashboards
     values:
-      - extraEnvs:
+      - opensearchHosts: http://opensearch-cluster-master.opensearch.svc.cluster.local:9200
+        extraEnvs:
           - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
             value: "true"
