@@ -71,13 +71,16 @@ releases:
     namespace: {{ $opensearchNamespace }}
     chart: opensearch/opensearch-dashboards
     values:
-      - opensearchHosts:
-        - "http://opensearch-cluster-master:9200"
-      - server.host: "0.0.0.0"
-      - extraEnvs:
+      - config:
+          opensearch_dashboards.yml: |
+            server.host: "0.0.0.0"
+            logging.root.level: debug
+        opensearchHosts: "[\"http://opensearch-cluster-master.{{ $opensearchNamespace }}.svc.cluster.local:9200\"]"
+        server.host: "0.0.0.0"
+        extraEnvs:
           - name: DISABLE_SECURITY_DASHBOARDS_PLUGIN
             value: "true"
-      - startupProbe:
-        initialDelaySeconds: 30
-        periodSeconds: 10
-        failureThreshold: 12
+        startupProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 12
