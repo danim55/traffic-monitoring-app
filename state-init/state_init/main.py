@@ -2,6 +2,8 @@ import json
 import os
 import sys
 
+import requests
+
 from opensearch.opensearch_service import create_index
 
 INDEX_MAPPINGS_FILE_NAME = "index-mappings.json"
@@ -22,20 +24,58 @@ def entry_point() -> None:
     opensearch_dashboards_port = _get_required_env_var(
         "STATEINIT_OPENSEARCH_DASHBOARDS_PORT"
     )
-    opensearch_dashboard_conf_file = _get_required_env_var(
+    opensearch_dashboard_conf_path = _get_required_env_var(
         "STATEINIT_OPENSEARCH_DASHBOARDS_RESOURCES_PATH"
     )
 
-    load_opensearch_idices(opensearch_dashboard_conf_file)
+    load_opensearch_indices(opensearch_dashboard_conf_path)
+
+    load_opensearch_dashboard_configuration(opensearch_dashboard_conf_path=opensearch_dashboard_conf_path,
+                                            opensearch_dashboard_host=opensearch_dashboard_host,
+                                            opensearch_dashboard_port=opensearch_dashboards_port)
 
 
-def load_opensearch_idices(dashboards_conf_file: str) -> None:
+def load_opensearch_indices(dashboards_conf_file: str) -> None:
     # Load indices from json file
     with open(f"{dashboards_conf_file}/{INDEX_MAPPINGS_FILE_NAME}") as json_file:
         index_mappings = json.load(json_file)
 
     for index_name, mappings in index_mappings.items():
         create_index(index_name, mappings)
+
+
+def load_opensearch_dashboard_configuration(opensearch_dashboard_conf_path: str,
+                                            opensearch_dashboard_host: str,
+                                            opensearch_dashboard_port: str) -> None:
+    # OpenSearch Dashboards URL
+    opensearch_dashboard_url = f'http://{opensearch_dashboard_host}:{opensearch_dashboard_port}/opensearch'
+
+    # API endpoint for importing saved objects
+    import_endpoint = f'{opensearch_dashboard_url}/api/saved_objects/_import?overwrite=true'
+
+    with open(f"{opensearch_dashboard_conf_path}/export.ndjson", 'rb') as conf_file:
+
+        # Set the file data for the multipart form data
+        files = {
+            'file': conf_file,
+        }
+
+        # Set the headers for the request
+        headers = {
+            'osd-version': '2.18.0',
+        }
+
+        # Send the POST request to import the dashboard
+        response = requests.post(import_endpoint, headers=headers, files=files)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        print("Dashboard loaded successfully")
+    else:
+        # Raise an exception to fail the program and trigger pod restart
+        raise RuntimeError(
+            f"Failed to load the opensearch-dashboard configuration."
+            f" Status Code: {response.status_code}, Response: {response.text}")
 
 
 if __name__ == "__main__":
