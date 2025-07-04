@@ -92,12 +92,3 @@ If working in a corporate network (e.g., behind an Artifactory proxy):
   * Set `REQUESTS_CA_BUNDLE` and `PIP_CERT` environment variables to avoid SSL issues
 
 Make sure any internal certificates or proxy configurations are correctly mirrored inside your Docker environment.
-
----
-
-## Integration Notes
-
-* This module is expected to be orchestrated within a broader application stack.
-* Future deployment will include container orchestration via Kubernetes and Helm.
-* Gradle and GitHub Actions will be used to coordinate multi-component builds and CI/CD.
-

@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "neural_network"
+version = "0.0.1"
+description = "Neural Network"
+authors = ["Daniel Merino Cano <dmerinocano@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4"
+pyshark = "0.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+flake8 = "^6.0"
+mypy = "^1.0"
+
+[build-system]
+requires = ["poetry-core>=1.2.0"]
+build-backend = "poetry.core.masonry.api"

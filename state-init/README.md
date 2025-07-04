@@ -89,5 +89,3 @@ If you're behind a corporate Artifactory or custom PyPI proxy, the Docker image 
 * Trust your organization's CA certificates via `REQUESTS_CA_BUNDLE` and `PIP_CERT`
 
 Ensure any internal certs or proxy settings are mounted or baked into the image as needed.
-
----
