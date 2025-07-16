@@ -1,6 +1,10 @@
 import pyshark
 
 
+def dummy_test_aux(value: int) -> int:
+    return value
+
+
 def capture_traffic() -> None:
     capture = pyshark.LiveCapture(interface="eth0")
     capture.sniff_continuously()
