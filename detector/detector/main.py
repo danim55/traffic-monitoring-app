@@ -6,7 +6,7 @@ def capture_traffic() -> None:
     capture.sniff_continuously()
 
     for pkt in capture:
-        print(pkt)
+        print(len(pkt))
 
 
 if __name__ == "__main__":
