@@ -2,6 +2,9 @@ from datetime import datetime
 
 import pyshark
 
+def dummy_test(value: int) -> int:
+    return value
+
 
 def test_pyshark() -> None:
     capture = pyshark.LiveCapture(interface="eth0")
