@@ -52,12 +52,12 @@ def capture_flows():
         if not hasattr(pkt, "ip"):
             continue  # skip non-IP
 
-        tpl = (pkt.ip.src, pkt[pkt.transport_layer].srcport,
+        captured_tuple = (pkt.ip.src, pkt[pkt.transport_layer].srcport,
                pkt.ip.dst, pkt[pkt.transport_layer].dstport,
                pkt.transport_layer)
-        rev_tpl = (tpl[2], tpl[3], tpl[0], tpl[1], tpl[4])  # reverse tuple
+        reverse_tuple = (captured_tuple[2], captured_tuple[3], captured_tuple[0], captured_tuple[1], captured_tuple[4])  # reverse captured_tuple
 
-        f = flows.get(tpl) or flows.get(rev_tpl)
+        f = flows.get(captured_tuple) or flows.get(reverse_tuple)
         now = datetime.utcnow()
 
         # close any idle/expired flows
@@ -79,9 +79,6 @@ def capture_flows():
         else:
             f = Flow(pkt)
             flows[f.key] = f
-
-        # Optionally, handle heavy flow cleanup after each packet
-        # (already covered above)
 
 
 # Example usage
