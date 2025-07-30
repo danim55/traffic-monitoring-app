@@ -9,22 +9,21 @@ INTERFACE = "eth0"
 
 
 def dummy_test(value: int) -> int:
-    return value  # placeholder for your logic
+    return value
 
 
 class Flow:
-    def __init__(self, first_pkt, tpl):
-        self.pkts = [first_pkt]
+    def __init__(self, package, tpl):
+        self.packages = [package]
         self.first_ts = self.last_ts = datetime.now(timezone.utc)  # timezone-aware
         self.key = tpl
 
-    def add(self, pkt):
-        ts = datetime.now(timezone.utc)
-        self.pkts.append(pkt)
-        self.last_ts = ts
+    def add_package(self, package):
+        self.packages.append(package)
+        self.last_ts = datetime.now(timezone.utc)
 
-    def is_finished(self, pkt):
-        flags = getattr(pkt.tcp, 'flags', "")
+    def is_finished(self, package):
+        flags = getattr(package.tcp, 'flags', "")
         return 'F' in flags or 'R' in flags
 
     def is_idle(self):
@@ -34,9 +33,9 @@ class Flow:
         return datetime.now(timezone.utc) - self.first_ts > ACTIVE_TIMEOUT
 
     def features(self):
-        count = len(self.pkts)
+        count = len(self.packages)
         duration = (self.last_ts - self.first_ts).total_seconds()
-        byte_total = sum(int(p.length) for p in self.pkts)
+        byte_total = sum(int(p.length) for p in self.packages)
         return {"count": count, "duration": duration, "bytes": byte_total}
 
 
@@ -44,12 +43,12 @@ def capture_flows():
     capture = pyshark.LiveCapture(interface=INTERFACE)
     flows = {}
 
-    for pkt in capture.sniff_continuously():
-        if not hasattr(pkt, 'ip') or pkt.transport_layer not in ('TCP', 'UDP'):
+    for package in capture.sniff_continuously():
+        if not hasattr(package, 'ip') or package.transport_layer not in ('TCP', 'UDP'):
             continue
 
-        tl = pkt.transport_layer
-        layer = getattr(pkt, tl.lower(), None)
+        tl = package.transport_layer
+        layer = getattr(package, tl.lower(), None)
         if layer is None:
             continue
 
@@ -58,7 +57,7 @@ def capture_flows():
         if src_port is None or dst_port is None:
             continue
 
-        tpl = (pkt.ip.src, src_port, pkt.ip.dst, dst_port, tl)
+        tpl = (package.ip.src, src_port, package.ip.dst, dst_port, tl)
         rev_tpl = (tpl[2], tpl[3], tpl[0], tpl[1], tpl[4])
 
         # Close idle/expired flows first
@@ -70,12 +69,12 @@ def capture_flows():
 
         f = flows.get(tpl) or flows.get(rev_tpl)
         if f:
-            f.add(pkt)
-            if f.is_finished(pkt):
+            f.add_package(package)
+            if f.is_finished(package):
                 flows.pop(f.key, None)
                 yield f.features()
         else:
-            flows[tpl] = Flow(pkt, tpl)
+            flows[tpl] = Flow(package, tpl)
 
 
 if __name__ == "__main__":
