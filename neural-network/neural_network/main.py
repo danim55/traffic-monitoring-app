@@ -13,28 +13,28 @@ def dummy_test(value: int) -> int:
 
 
 class Flow:
-    def __init__(self, package, tpl):
+    def __init__(self, package, flow_tuple):
         self.packages = [package]
-        self.first_ts = self.last_ts = datetime.now(timezone.utc)  # timezone-aware
-        self.key = tpl
+        self.first_timestamp = self.last_timestamp = datetime.now(timezone.utc)  # timezone-aware
+        self.key = flow_tuple
 
     def add_package(self, package):
         self.packages.append(package)
-        self.last_ts = datetime.now(timezone.utc)
+        self.last_timestamp = datetime.now(timezone.utc)
 
     def is_finished(self, package):
         flags = getattr(package.tcp, 'flags', "")
         return 'F' in flags or 'R' in flags
 
     def is_idle(self):
-        return datetime.now(timezone.utc) - self.last_ts > IDLE_TIMEOUT
+        return datetime.now(timezone.utc) - self.last_timestamp > IDLE_TIMEOUT
 
     def is_active_expired(self):
-        return datetime.now(timezone.utc) - self.first_ts > ACTIVE_TIMEOUT
+        return datetime.now(timezone.utc) - self.first_timestamp > ACTIVE_TIMEOUT
 
     def features(self):
         count = len(self.packages)
-        duration = (self.last_ts - self.first_ts).total_seconds()
+        duration = (self.last_timestamp - self.first_timestamp).total_seconds()
         byte_total = sum(int(p.length) for p in self.packages)
         return {"count": count, "duration": duration, "bytes": byte_total}
 
@@ -57,8 +57,8 @@ def capture_flows():
         if src_port is None or dst_port is None:
             continue
 
-        tpl = (package.ip.src, src_port, package.ip.dst, dst_port, tl)
-        rev_tpl = (tpl[2], tpl[3], tpl[0], tpl[1], tpl[4])
+        flow_tuple = (package.ip.src, src_port, package.ip.dst, dst_port, tl)
+        rev_flow_tuple = (flow_tuple[2], flow_tuple[3], flow_tuple[0], flow_tuple[1], flow_tuple[4])
 
         # Close idle/expired flows first
         to_close = [k for k, f in flows.items()
@@ -67,14 +67,14 @@ def capture_flows():
             flow = flows.pop(k)
             yield flow.features()
 
-        f = flows.get(tpl) or flows.get(rev_tpl)
+        f = flows.get(flow_tuple) or flows.get(rev_flow_tuple)
         if f:
             f.add_package(package)
             if f.is_finished(package):
                 flows.pop(f.key, None)
                 yield f.features()
         else:
-            flows[tpl] = Flow(package, tpl)
+            flows[flow_tuple] = Flow(package, flow_tuple)
 
 
 if __name__ == "__main__":
