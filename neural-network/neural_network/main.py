@@ -32,7 +32,23 @@ def packet_summary(pkt: Packet):
         src = dst = proto_num = None
 
     # Transport info (TCP/UDP if present)
-    transport = pkt.transport_layer
+    transport_prot = pkt.transport_layer
+    source_port = dest_port = None
+    flags = None
+    if transport_prot == 'TCP' and hasattr(pkt, 'tcp'):
+        source_port = safe_get(pkt.tcp, 'srcport')
+        dest_port = safe_get(pkt.tcp, 'dstport')
+        flags = safe_get(pkt.tcp, 'flags')  # raw flags string
+    elif transport_prot == 'UDP' and hasattr(pkt, 'udp'):
+        source_port = safe_get(pkt.udp, 'srcport')
+        dest_port = safe_get(pkt.udp, 'dstport')
+
+    # Frame length (falls back to frame_info)
+    length = None
+    try:
+        length = int(getattr(pkt, 'length', getattr(pkt.frame_info, 'len')))
+    except Exception:
+        pass
 
 
 def sniff(interface=DEFAULT_INTERFACE, bpf_filter=None):
