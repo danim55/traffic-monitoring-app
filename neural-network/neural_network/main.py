@@ -50,6 +50,19 @@ def packet_summary(pkt: Packet):
     except Exception:
         pass
 
+    # Compose a preview line
+    parts = [
+        timestamp, ip_ver or '',
+        f"{src}:{source_port}" if src else '',
+        "->",
+        f"{dst}:{dest_port}" if dst else '',
+                   transport_prot or '',
+        f"len={length}" if length else '',
+        f"flags={flags}" if flags else '',
+        f"highest={pkt.highest_layer}"
+    ]
+    return " ".join(p for p in parts if p)
+
 
 def sniff(interface=DEFAULT_INTERFACE, bpf_filter=None):
     print(f"Sniffing on {interface} ... (Ctrl-C to stop)")
