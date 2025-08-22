@@ -3,7 +3,8 @@ from pyshark.packet.fields import LayerFieldsContainer
 from pyshark.packet.packet import Packet
 
 DEFAULT_INTERFACE = "eth0"
-
+# TODO change to 120 when finished testing
+FLOW_TIMEOUT=5 # seconds
 
 def safe_get(layer, attr, default=None) -> LayerFieldsContainer:
     try:
