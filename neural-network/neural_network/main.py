@@ -1,10 +1,11 @@
 import pyshark
+from pyshark.packet.fields import LayerFieldsContainer
 from pyshark.packet.packet import Packet
 
 DEFAULT_INTERFACE = "eth0"
 
 
-def safe_get(layer, attr, default=None):
+def safe_get(layer, attr, default=None) -> LayerFieldsContainer:
     try:
         return getattr(layer, attr)
     except Exception:
@@ -19,10 +20,19 @@ def packet_summary(pkt: Packet):
     if hasattr(pkt, 'ip'):
         ip_ver = 'IPv4'
         src = safe_get(pkt.ip, 'src')
-        print(f"Type of src is {type(src)}")
         dst = safe_get(pkt.ip, 'dst')
-        proto_num = safe_get(pkt.ip, 'proto')
-        print(f"Ip src: {src} Ip dst: {dst} proto numb: {proto_num}")
+        proto_num = safe_get(pkt.ip, 'proto')  # numeric
+    elif hasattr(pkt, 'ipv6'):
+        ip_ver = 'IPv6'
+        src = safe_get(pkt.ipv6, 'src')
+        dst = safe_get(pkt.ipv6, 'dst')
+        proto_num = safe_get(pkt.ipv6, 'nxt')  # next header
+    else:
+        ip_ver = 'Non-IP'
+        src = dst = proto_num = None
+
+    # Transport info (TCP/UDP if present)
+    transport = pkt.transport_layer
 
 
 def sniff(interface=DEFAULT_INTERFACE, bpf_filter=None):
