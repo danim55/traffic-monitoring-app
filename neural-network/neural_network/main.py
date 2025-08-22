@@ -4,9 +4,25 @@ from pyshark.packet.packet import Packet
 DEFAULT_INTERFACE = "eth0"
 
 
+def safe_get(layer, attr, default=None):
+    try:
+        return getattr(layer, attr)
+    except Exception:
+        return default
+
+
 def packet_summary(pkt: Packet):
     # Timestamp
-    ts = pkt.sniff_time.isoformat()
+    timestamp = pkt.sniff_time.isoformat()
+
+    # IP version + addresses
+    if hasattr(pkt, 'ip'):
+        ip_ver = 'IPv4'
+        src = safe_get(pkt.ip, 'src')
+        print(f"Type of src is {type(src)}")
+        dst = safe_get(pkt.ip, 'dst')
+        proto_num = safe_get(pkt.ip, 'proto')
+        print(f"Ip src: {src} Ip dst: {dst} proto numb: {proto_num}")
 
 
 def sniff(interface=DEFAULT_INTERFACE, bpf_filter=None):
