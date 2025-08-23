@@ -1,15 +1,30 @@
+from typing import Any
+
 import pyshark
 from pyshark.packet.fields import LayerFieldsContainer
 from pyshark.packet.packet import Packet
 
 DEFAULT_INTERFACE = "eth0"
+# TODO change to 120 when finished testing
+FLOW_TIMEOUT = 5  # seconds
+
+flows = {}  # key: 5-tuple, value: Flow instance
 
 
-def safe_get(layer, attr, default=None) -> LayerFieldsContainer:
+def safe_get(layer: Any, attr: str, default=None) -> LayerFieldsContainer:
     try:
         return getattr(layer, attr)
-    except Exception:
+    except AttributeError:
         return default
+
+
+def key_tuple(src, dst, source_port, dest_port, proto):
+    return src, dst, source_port, dest_port, proto
+
+
+def rev_key_tuple(key):
+    src, dst, source_port, dest_port, proto = key
+    return dst, src, source_port, dest_port, proto
 
 
 def packet_summary(pkt: Packet):
