@@ -1,15 +1,14 @@
 # ---------------- Config -----------------
+import json
 import logging
 import os
 import queue
 import threading
 import time
-from http.client import HTTPException
 from typing import Any, Dict, Union
-from urllib.request import Request
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from starlette.responses import JSONResponse
 
 HOST = os.getenv("DETECTOR_HOST", "0.0.0.0")
@@ -68,28 +67,41 @@ def _worker_loop():
     logger.info("Worker thread stopping")
 
 
-@app.post("/predict")
-async def predict(payload: Union[Dict[str, Any], list, Any], request: Request):
+# ---------- FastAPI endpoints ----------
+
+@app.post("/predict", response_model=None)
+async def predict(request: Request):
     """
     Expected: CICFlowMeter POSTs a single flow as JSON.
     We accept dict or list; we simply enqueue the payload for background processing.
     Returns 200 on enqueue or 503 if queue is full
-    :param payload: received flow from CICFlowMeter
-    :param request: Request from the server
+    :param request: Flow information sent in the body request of the CICFlowMeter tool
     :return: JSONResponse with 200 if succeed or 503 if queue is full
     """
-    # First we check if the received information is in JSON format
-    if request.headers.get(CONTENT_TYPE, "").lower().find("application/json") < 0:
-        logger.debug("Non-JSON content type: %s", request.headers.get(CONTENT_TYPE))
+    # Read raw bytes first (always safe)
+    raw = await request.body()
+    # Log headers + first part of body for debugging
+    logger.info("Incoming POST /predict from %s headers=%s", request.client, dict(request.headers))
+    try:
+        logger.debug("Raw body (bytes, up to 1k): %s", raw[:1024])
+    except Exception:
+        pass
 
-    # Second, enqueue or return 503 if full
+    # Try to parse JSON (cicflowmeter should send JSON)
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        logger.warning("Invalid JSON payload: %s ; raw preview=%s", exc, raw[:500])
+        # client sent non-JSON or malformed JSON — reply 400 (not 422)
+        raise HTTPException(status_code=400, detail="invalid JSON")
+
+    # enqueue (non-blocking)
     try:
         flow_queue.put_nowait(payload)
     except queue.Full:
         logger.warning("Queue full, rejecting flow")
         raise HTTPException(status_code=503, detail="ingestion queue full")
 
-    # Immediately ack; processing happens async
     return JSONResponse({"status": "received"}, status_code=200)
 
 
