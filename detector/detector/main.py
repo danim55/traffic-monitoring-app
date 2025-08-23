@@ -36,14 +36,14 @@ _worker_thread: threading.Thread | None = None
 # ---------- Lifecycle handlers ----------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Configuration at the start of the app
+    # Configuration before the application start
     global _worker_thread
     _stop_event.clear()
     _worker_thread = threading.Thread(target=_worker_loop, name="flow-worker", daemon=True)
     _worker_thread.start()
     logger.info(f"Detector started on {HOST}:{PORT}")
     yield
-    # Clean the configuration at the end of the app
+    # Configuration after application finish
     logger.info("Shutdown initiated")
     _stop_event.set()
     if _worker_thread is not None:
@@ -65,14 +65,11 @@ def process_flow_item(item: Union[Dict[str, Any], list]) -> None:
     :param item: flow to be processed
     """
     # Basic example: log the most useful fields if present
-    flow_id = None
-    if isinstance(item, dict):
-        flow_id = item.get("Flow Id")
-    logger.info("Processing flow (Flow Id = %s keys=%s", flow_id, list(item.keys()))
+    logger.info(f"Processing flow {item}")
 
 
 def _worker_loop():
-    logger.info("Worker thread started (queue maxsize=%d)", QUEUE_MAX_SIZE)
+    logger.info(f"Worker thread started (queue maxsize={QUEUE_MAX_SIZE})")
     while not _stop_event.is_set():
         try:
             item = flow_queue.get(timeout=0.5)
@@ -81,7 +78,7 @@ def _worker_loop():
         try:
             process_flow_item(item)
         except Exception as e:
-            logger.exception("Error processing flow: %s", e)
+            logger.exception(f"Error processing flow: {e}")
         finally:
             try:
                 flow_queue.task_done()
@@ -108,20 +105,16 @@ async def predict(request: Request):
     raw = await request.body()
     # Log headers + first part of body for debugging
     logger.info(f"Incoming POST /predict from {request.client} headers={dict(request.headers)}")
-    try:
-        logger.debug("Raw body (bytes, up to 1k): %s", raw[:1024])
-    except Exception:
-        pass
 
     # Try to parse JSON (cicflowmeter should send JSON)
     try:
         payload = json.loads(raw)
     except json.JSONDecodeError as exc:
-        logger.warning("Invalid JSON payload: %s ; raw preview=%s", exc, raw[:500])
+        logger.warning(f"Invalid JSON payload: {exc}; raw preview={raw}", exc, raw[:500])
         # client sent non-JSON or malformed JSON — reply 400 (not 422)
         raise HTTPException(status_code=400, detail="invalid JSON")
 
-    # enqueue (non-blocking)
+    # Enqueue (non-blocking)
     try:
         flow_queue.put_nowait(payload)
     except queue.Full:
