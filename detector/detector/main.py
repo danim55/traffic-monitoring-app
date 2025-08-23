@@ -5,6 +5,7 @@ import queue
 import threading
 from typing import Any
 
+import uvicorn
 from fastapi import FastAPI
 
 HOST = os.getenv("DETECTOR_HOST", "0.0.0.0")
@@ -19,7 +20,7 @@ app = FastAPI(title="CICFlowMeter detector endpoint", version="0.1")
 
 # Thread-safe bounded queue for incoming flows
 flow_queue: queue.Queue[Any] = queue.Queue(maxsize=QUEUE_MAX_SIZE)
-_stop_event: Any = threading.Event  # TODO assign correct type
+_stop_event: type = threading.Event  # TODO assign correct type
 _worker_thread: threading.Thread | None = None
 
 
@@ -27,5 +28,10 @@ def dummy_test_aux(value: int) -> int:
     return value
 
 
+def _run():
+    # Call uvicorn programmatically so Dockerfile command keeps being valid
+    uvicorn.run("detector.main:app", host=HOST, port=PORT, log_level="info", reload=True)
+
+
 if __name__ == "__main__":
-    print("Hello world")
+    _run()
