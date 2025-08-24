@@ -6,10 +6,10 @@ from typing import Sequence, Tuple, Union, Optional
 import joblib
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 from keras import Sequential
 from keras.src.layers import Flatten, Dropout, Dense, Conv1D, MaxPooling1D
 from keras.src.saving import load_model
+from tensorflow.python import keras
 
 LABELS: Sequence[str] = [
     "Benign",
@@ -34,10 +34,10 @@ logger.info("started")
 def build_detector(
         input_shape: Tuple[int, int] = DEFAULT_INPUT_SHAPE,
         num_classes: int = NUM_CLASSES,
-) -> tf.keras.Model:
+) -> Sequential:
     """
     Build and compile the CNN used for traffic classification.
-    Returns a compiled tf.keras.Model (weights randomly initialized).
+    Returns a compiled keras.Model (weights randomly initialized).
     """
     model = Sequential(name="cnn_detector")
 
@@ -65,8 +65,8 @@ def build_detector(
     return model
 
 
-# --- model loading helpers ---
-def load_weights_to_model(model: tf.keras.Model, weights_path: Union[str, Path]) -> tf.keras.Model:
+# --- Model loading helpers ---
+def load_weights_to_model(model: Sequential, weights_path: Union[str, Path]) -> Sequential:
     """
     Load HDF5 weights into an existing model.
     """
@@ -78,7 +78,7 @@ def load_weights_to_model(model: tf.keras.Model, weights_path: Union[str, Path])
     return model
 
 
-def load_saved_model(model_path: Union[str, Path]) -> tf.keras.Model:
+def load_saved_model(model_path: Union[str, Path]) -> Sequential:
     """
     Load a full saved model produced by model.save(...).
     """
@@ -90,7 +90,7 @@ def load_saved_model(model_path: Union[str, Path]) -> tf.keras.Model:
     return m
 
 
-# --- scaler helpers ---
+# --- Scaler helpers ---
 def load_scaler(scaler_path: Union[str, Path]):
     """
     Load a fitted sklearn scaler (joblib or pickle).
@@ -104,7 +104,7 @@ def load_scaler(scaler_path: Union[str, Path]):
     return scaler
 
 
-# --- preprocessing + classification ---
+# --- Preprocessing + classification ---
 def _clean_and_scale_array(
         x: np.ndarray, scaler
 ) -> np.ndarray:
@@ -130,7 +130,7 @@ def prepare_input_for_model(x_scaled: np.ndarray) -> np.ndarray:
 
 
 def predict_labels_from_array(
-        x: np.ndarray, model: tf.keras.Model, scaler, labels: Optional[Sequence[str]] = None
+        x: np.ndarray, model: keras.Model, scaler, labels: Optional[Sequence[str]] = None
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Classify a numpy array of features.
@@ -151,7 +151,7 @@ def predict_labels_from_array(
 
 
 def predict_labels_from_dataframe(
-        df: pd.DataFrame, feature_columns: Optional[Sequence[str]], model: tf.keras.Model, scaler,
+        df: pd.DataFrame, feature_columns: Optional[Sequence[str]], model: keras.Model, scaler,
         labels: Optional[Sequence[str]] = None
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
@@ -171,11 +171,11 @@ def predict_labels_from_dataframe(
     return predict_labels_from_array(x, model, scaler, labels=labels)
 
 
-# --- convenience: load model+scaler and run on DataFrame/file ---
+# --- Convenience: load model+scaler and run on DataFrame/file ---
 def load_model_and_scaler(weights_path: Optional[Union[str, Path]] = None,
                           saved_model_path: Optional[Union[str, Path]] = None,
                           scaler_path: Optional[Union[str, Path]] = None
-                          ) -> Tuple[tf.keras.Model, object]:
+                          ) -> Tuple[Sequential, object]:
     """
     Convenience helper:
     - Provide either `saved_model_path` (recommended) OR `weights_path` together with a freshly built model.
