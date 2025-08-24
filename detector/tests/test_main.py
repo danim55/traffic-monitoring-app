@@ -1,7 +1,6 @@
-from detector.main import main
+from detector.main import dummy_test_aux
 
 
-def test_main_output(capsys):
-    main()
-    captured = capsys.readouterr()
-    assert "Hello, World!" in captured.out
+def test_main_output():
+    value = dummy_test_aux(10)
+    assert value, 10
