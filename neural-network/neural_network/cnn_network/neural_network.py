@@ -1,4 +1,3 @@
-# --- configuration / labels ---
 import logging
 from pathlib import Path
 from typing import Sequence, Tuple, Union, Optional
@@ -11,6 +10,7 @@ from keras.src.layers import Flatten, Dropout, Dense, Conv1D, MaxPooling1D
 from keras.src.saving import load_model
 from tensorflow.python import keras
 
+# --- Configuration / labels ---
 LABELS: Sequence[str] = [
     "Benign",
     "DoS attacks-GoldenEye",
@@ -37,7 +37,7 @@ def build_detector(
 ) -> Sequential:
     """
     Build and compile the CNN used for traffic classification.
-    Returns a compiled keras.Model (weights randomly initialized).
+    Returns a compiled Sequential model (weights randomly initialized).
     """
     model = Sequential(name="cnn_detector")
 
@@ -76,18 +76,6 @@ def load_weights_to_model(model: Sequential, weights_path: Union[str, Path]) -> 
     model.load_weights(str(weights_path))
     logger.info("Loaded weights from %s", weights_path)
     return model
-
-
-def load_saved_model(model_path: Union[str, Path]) -> Sequential:
-    """
-    Load a full saved model produced by model.save(...).
-    """
-    model_path = Path(model_path)
-    if not model_path.exists():
-        raise FileNotFoundError(f"Saved model not found: {model_path}")
-    m = load_model(str(model_path))
-    logger.info("Loaded full model from %s", model_path)
-    return m
 
 
 # --- Scaler helpers ---
@@ -178,18 +166,15 @@ def load_model_and_scaler(weights_path: Optional[Union[str, Path]] = None,
                           ) -> Tuple[Sequential, object]:
     """
     Convenience helper:
-    - Provide either `saved_model_path` (recommended) OR `weights_path` together with a freshly built model.
+    - Provide `weights_path` together with a freshly built model.
     - scaler_path should point to a joblib/pickle dump of the scaler used at training time.
     Returns (model, scaler).
     """
-    if saved_model_path is not None:
-        model = load_saved_model(saved_model_path)
-    else:
-        model = build_detector()
-        if weights_path is None:
-            raise ValueError(
-                "If saved_model_path is not provided, weights_path must be provided to load weights into a freshly built model.")
-        load_weights_to_model(model, weights_path)
+    model = build_detector()
+    if weights_path is None:
+        raise ValueError(
+            "If saved_model_path is not provided, weights_path must be provided to load weights into a freshly built model.")
+    load_weights_to_model(model, weights_path)
 
     if scaler_path is None:
         raise ValueError("scaler_path must point to the fitted scaler used at training time (joblib file).")
