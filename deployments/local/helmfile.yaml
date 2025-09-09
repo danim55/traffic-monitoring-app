@@ -28,7 +28,6 @@ releases:
   - name: "traffic-monitoring"
     namespace: {{ $trafficMonitoringNamespace | quote }}
     createNamespace: true
-    # TODO: Fetch chart from the artifact registry. We'll be able to do that when we can tag chart OCI images with pipeline IDs. See https://jira.aes.alcatel.fr:8443/browse/DEVOPSSP-499
     chart: ../../helm/charts
     values:
       - image:
