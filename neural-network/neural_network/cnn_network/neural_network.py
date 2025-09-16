@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from keras import Sequential
 from keras.src.layers import Flatten, Dropout, Dense, Conv1D, MaxPooling1D
-from keras.src.saving import load_model
 from tensorflow.python import keras
 
 # --- Configuration / labels ---
